@@ -1,3 +1,52 @@
+const AUTH_SESSION_KEY = "tsumugu-authenticated";
+const DEMO_ACCOUNT = Object.freeze({
+  email: "admin@tsumugu.jp",
+  password: "customer2026"
+});
+
+const authScreen = document.querySelector("#authScreen");
+const appShell = document.querySelector("#appShell");
+const loginForm = document.querySelector("#loginForm");
+const emailInput = document.querySelector("#emailInput");
+const passwordInput = document.querySelector("#passwordInput");
+const loginError = document.querySelector("#loginError");
+const passwordToggle = document.querySelector("#passwordToggle");
+
+function readSession() {
+  try {
+    return sessionStorage.getItem(AUTH_SESSION_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function writeSession(isAuthenticated) {
+  try {
+    if (isAuthenticated) sessionStorage.setItem(AUTH_SESSION_KEY, "true");
+    else sessionStorage.removeItem(AUTH_SESSION_KEY);
+  } catch {
+    // The UI still works when storage is unavailable; the session simply will not persist.
+  }
+}
+
+function showAuthenticatedView(isAuthenticated) {
+  authScreen.hidden = isAuthenticated;
+  appShell.hidden = !isAuthenticated;
+  document.body.classList.toggle("authenticated", isAuthenticated);
+
+  if (isAuthenticated) {
+    loginError.textContent = "";
+    loginForm.reset();
+    passwordInput.type = "password";
+    passwordToggle.textContent = "表示";
+    passwordToggle.setAttribute("aria-label", "パスワードを表示");
+    passwordToggle.setAttribute("aria-pressed", "false");
+    searchInput.focus();
+  } else {
+    emailInput.focus();
+  }
+}
+
 const customers = [
   { id: 1, name: "田中 美咲", kana: "たなか みさき", company: "株式会社アーバンデザイン", role: "代表取締役", rank: "プラチナ", email: "m.tanaka@urban-design.jp", phone: "03-6821-1940", address: "東京都渋谷区神宮前 4-12-8", initials: "田中", color: "#7ca193", tags: ["重要顧客", "デザイン"], updated: "今日 10:32", active: true, notes: [{ text: "秋のブランドリニューアルについて、次回の打ち合わせで方向性を確認。参考資料を事前に共有する。", date: "2026年10月1日  佐藤 健一" }, { text: "展示会でご挨拶。新規店舗の内装プロジェクトを検討中とのこと。", date: "2026年9月18日  佐藤 健一" }] },
   { id: 2, name: "鈴木 一郎", kana: "すずき いちろう", company: "鈴木商事株式会社", role: "営業部長", rank: "ゴールド", email: "i.suzuki@suzuki-shoji.co.jp", phone: "045-910-2281", address: "神奈川県横浜市中区山下町 82", initials: "鈴木", color: "#b28e74", tags: ["商社"], updated: "昨日", active: true, notes: [{ text: "契約更新の見積書を送付。来週中に社内承認予定。", date: "2026年9月30日  佐藤 健一" }] },
@@ -13,7 +62,12 @@ const customers = [
   { id: 12, name: "林 大輔", kana: "はやし だいすけ", company: "オリオン物流株式会社", role: "経営企画部長", rank: "シルバー", email: "hayashi@orion-logi.co.jp", phone: "048-622-7741", address: "埼玉県さいたま市大宮区桜木町 4", initials: "林", color: "#738b80", tags: ["物流"], updated: "8月21日", active: true, notes: [] }
 ];
 
-const storedNotes = JSON.parse(localStorage.getItem("tsumugu-customer-notes") || "{}");
+let storedNotes = {};
+try {
+  storedNotes = JSON.parse(localStorage.getItem("tsumugu-customer-notes") || "{}");
+} catch {
+  storedNotes = {};
+}
 customers.forEach(customer => {
   if (storedNotes[customer.id]) customer.notes = storedNotes[customer.id];
 });
@@ -29,6 +83,36 @@ const resultCount = document.querySelector("#resultCount");
 const filterButton = document.querySelector("#filterButton");
 const sortButton = document.querySelector("#sortButton");
 const toast = document.querySelector("#toast");
+
+loginForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    loginError.textContent = "メールアドレスとパスワードを入力してください。";
+    (!email ? emailInput : passwordInput).focus();
+    return;
+  }
+
+  if (email !== DEMO_ACCOUNT.email || password !== DEMO_ACCOUNT.password) {
+    loginError.textContent = "メールアドレスまたはパスワードが正しくありません。";
+    passwordInput.select();
+    return;
+  }
+
+  writeSession(true);
+  showAuthenticatedView(true);
+});
+
+passwordToggle.addEventListener("click", () => {
+  const isVisible = passwordInput.type === "text";
+  passwordInput.type = isVisible ? "password" : "text";
+  passwordToggle.textContent = isVisible ? "表示" : "隠す";
+  passwordToggle.setAttribute("aria-label", isVisible ? "パスワードを表示" : "パスワードを隠す");
+  passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+  passwordInput.focus();
+});
 
 function escapeHTML(value) {
   return String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -184,5 +268,13 @@ scrim.addEventListener("click", () => {
 
 document.querySelector("#addCustomerButton").addEventListener("click", () => showToast("顧客追加はデモ版では利用できません"));
 
+document.querySelector("#logoutButton").addEventListener("click", () => {
+  writeSession(false);
+  sidebar.classList.remove("open");
+  scrim.classList.remove("show");
+  showAuthenticatedView(false);
+});
+
 renderList();
 renderDetail();
+showAuthenticatedView(readSession());

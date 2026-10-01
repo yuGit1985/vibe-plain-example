@@ -11,7 +11,43 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <main class="auth-screen" id="authScreen">
+      <section class="auth-card" aria-labelledby="loginTitle">
+        <div class="auth-brand" aria-label="紡ぐ">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><path d="M9 6.5c5.8 0 10.5 4.7 10.5 10.5S14.8 27.5 9 27.5M23 4.5c-5.8 0-10.5 4.7-10.5 10.5S17.2 25.5 23 25.5"/></svg>
+          </span>
+          <span>紡ぐ</span>
+        </div>
+        <p class="auth-eyebrow">CUSTOMER RELATIONSHIP</p>
+        <h1 id="loginTitle">おかえりなさい</h1>
+        <p class="auth-description">顧客管理を続けるにはログインしてください。</p>
+
+        <form class="login-form" id="loginForm" novalidate>
+          <label class="form-field" for="emailInput">
+            <span>メールアドレス</span>
+            <input id="emailInput" name="email" type="email" autocomplete="username" required aria-describedby="loginError" />
+          </label>
+          <label class="form-field" for="passwordInput">
+            <span>パスワード</span>
+            <span class="password-field">
+              <input id="passwordInput" name="password" type="password" autocomplete="current-password" required aria-describedby="loginError" />
+              <button id="passwordToggle" type="button" aria-label="パスワードを表示" aria-pressed="false">表示</button>
+            </span>
+          </label>
+          <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+          <button class="login-button" type="submit">ログイン</button>
+        </form>
+
+        <div class="demo-account">
+          <strong>デモアカウント</strong>
+          <span>admin@tsumugu.jp</span>
+          <span>customer2026</span>
+        </div>
+      </section>
+    </main>
+
+    <div class="app-shell" id="appShell" hidden>
       <aside class="sidebar" aria-label="メインナビゲーション">
         <a class="brand" href="#" aria-label="紡ぐ ホーム">
           <span class="brand-mark" aria-hidden="true">
@@ -47,7 +83,7 @@
               <strong>佐藤 健一</strong>
               <span>管理者</span>
             </div>
-            <button class="icon-button subtle" type="button" aria-label="プロフィールメニュー">•••</button>
+            <button class="logout-button" id="logoutButton" type="button">ログアウト</button>
           </div>
         </div>
       </aside>

@@ -21,6 +21,53 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+[hidden] { display: none !important; }
+
+.auth-screen {
+  min-height: 100vh;
+  padding: 32px 20px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(230, 173, 91, .18), transparent 25%),
+    radial-gradient(circle at 84% 82%, rgba(91, 145, 123, .18), transparent 28%),
+    #173d35;
+}
+.auth-card {
+  width: min(100%, 430px);
+  padding: 43px 44px 38px;
+  border: 1px solid rgba(255, 255, 255, .7);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .98);
+  box-shadow: 0 24px 70px rgba(4, 28, 22, .3);
+}
+.auth-brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .06em; }
+.auth-brand .brand-mark { width: 27px; height: 27px; }
+.auth-eyebrow { margin: 35px 0 8px; color: #789186; font-size: 9px; font-weight: 700; letter-spacing: .2em; }
+.auth-card h1 { margin: 0; color: var(--ink); font-family: "Noto Sans JP", sans-serif; font-size: 27px; letter-spacing: .02em; }
+.auth-description { margin: 10px 0 28px; color: var(--muted); font-size: 12px; }
+.login-form { display: grid; gap: 17px; }
+.form-field { display: grid; gap: 7px; color: #52645f; font-size: 11px; font-weight: 600; }
+.form-field > input, .password-field {
+  width: 100%;
+  height: 45px;
+  border: 1px solid #d7dfdb;
+  border-radius: 7px;
+  background: #fafbf9;
+  transition: .2s ease;
+}
+.form-field > input { padding: 0 13px; outline: none; }
+.form-field > input:focus, .password-field:focus-within { border-color: #719586; box-shadow: 0 0 0 3px rgba(62, 114, 95, .09); background: white; }
+.password-field { display: flex; align-items: center; overflow: hidden; }
+.password-field input { min-width: 0; height: 100%; flex: 1; padding: 0 13px; border: 0; outline: 0; background: transparent; }
+.password-field button { height: 100%; padding: 0 13px; border: 0; background: transparent; color: var(--green); font-size: 10px; font-weight: 600; cursor: pointer; }
+.login-error { min-height: 17px; margin: -6px 0 -5px; color: #b34f42; font-size: 10px; }
+.login-button { height: 45px; border: 0; border-radius: 7px; background: var(--green); color: white; font-size: 12px; font-weight: 600; cursor: pointer; transition: .2s ease; }
+.login-button:hover { background: var(--green-dark); transform: translateY(-1px); }
+.demo-account { margin-top: 25px; padding: 13px 15px; display: grid; grid-template-columns: 1fr auto; gap: 4px 15px; border-radius: 7px; background: var(--green-pale); color: #587068; font-size: 10px; }
+.demo-account strong { grid-row: 1 / 3; align-self: center; color: var(--green-dark); font-size: 10px; }
+.demo-account span { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
 button, input, textarea { font: inherit; }
 button { color: inherit; }
 
@@ -89,6 +136,8 @@ button { color: inherit; }
 .icon-button { display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; }
 .icon-button svg { width: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .icon-button.subtle { margin-left: auto; color: #9eb2ac; letter-spacing: 2px; }
+.logout-button { margin-left: auto; padding: 5px 0 5px 8px; border: 0; background: transparent; color: #a9bcb6; font-size: 9px; cursor: pointer; }
+.logout-button:hover { color: white; }
 .notification-button { position: relative; color: #5e6e69; }
 .notification-button span { position: absolute; top: 0; right: 0; width: 6px; height: 6px; border: 1.5px solid var(--cream); border-radius: 50%; background: #dc7b63; }
 .help-link { border: 0; border-left: 1px solid #d8ddda; padding-left: 18px; background: none; color: #65736f; font-size: 12px; cursor: pointer; }
@@ -228,6 +277,11 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 }
 
 @media (max-width: 430px) {
+  .auth-screen { padding: 18px 12px; }
+  .auth-card { padding: 34px 25px 29px; }
+  .auth-eyebrow { margin-top: 29px; }
+  .demo-account { grid-template-columns: 1fr; }
+  .demo-account strong { grid-row: auto; margin-bottom: 3px; }
   .topbar { height: 58px; }
   .breadcrumb span { display: none; }
   .help-link { display: none; }
