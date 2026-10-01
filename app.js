@@ -1,16 +1,16 @@
 const customers = [
-  { id: 1, name: "田中 美咲", kana: "たなか みさき", company: "株式会社アーバンデザイン", role: "代表取締役", email: "m.tanaka@urban-design.jp", phone: "03-6821-1940", address: "東京都渋谷区神宮前 4-12-8", initials: "田中", color: "#7ca193", tags: ["重要顧客", "デザイン"], updated: "今日 10:32", active: true, notes: [{ text: "秋のブランドリニューアルについて、次回の打ち合わせで方向性を確認。参考資料を事前に共有する。", date: "2026年10月1日  佐藤 健一" }, { text: "展示会でご挨拶。新規店舗の内装プロジェクトを検討中とのこと。", date: "2026年9月18日  佐藤 健一" }] },
-  { id: 2, name: "鈴木 一郎", kana: "すずき いちろう", company: "鈴木商事株式会社", role: "営業部長", email: "i.suzuki@suzuki-shoji.co.jp", phone: "045-910-2281", address: "神奈川県横浜市中区山下町 82", initials: "鈴木", color: "#b28e74", tags: ["商社"], updated: "昨日", active: true, notes: [{ text: "契約更新の見積書を送付。来週中に社内承認予定。", date: "2026年9月30日  佐藤 健一" }] },
-  { id: 3, name: "佐々木 優子", kana: "ささき ゆうこ", company: "合同会社みらい企画", role: "プロジェクトマネージャー", email: "yuko@mirai-kikaku.jp", phone: "06-7734-3092", address: "大阪府大阪市北区梅田 2-4-9", initials: "佐々", color: "#798ba5", tags: ["企画", "継続案件"], updated: "9月29日", active: true, notes: [{ text: "新サービスのローンチは11月中旬を予定。制作スケジュールを再調整する。", date: "2026年9月29日  佐藤 健一" }] },
-  { id: 4, name: "高橋 健太", kana: "たかはし けんた", company: "株式会社ノースフィールド", role: "取締役", email: "takahashi@northfield.jp", phone: "011-825-6670", address: "北海道札幌市中央区北3条西 5", initials: "高橋", color: "#7d987c", tags: ["重要顧客"], updated: "9月26日", active: true, notes: [] },
-  { id: 5, name: "山本 明日香", kana: "やまもと あすか", company: "アトリエ ソラ", role: "オーナー", email: "asuka@atelier-sora.com", phone: "092-451-8083", address: "福岡県福岡市博多区博多駅前 1-7", initials: "山本", color: "#b88789", tags: ["クリエイティブ"], updated: "9月22日", active: false, notes: [{ text: "春のカタログ制作について相談あり。年明けに再度ご連絡する。", date: "2026年9月22日  佐藤 健一" }] },
-  { id: 6, name: "伊藤 直樹", kana: "いとう なおき", company: "東西テクノロジー株式会社", role: "事業開発部 マネージャー", email: "n.ito@tozai-tech.jp", phone: "03-5501-4438", address: "東京都港区芝浦 3-10-6", initials: "伊藤", color: "#8c85a2", tags: ["IT", "新規"], updated: "9月18日", active: true, notes: [] },
-  { id: 7, name: "渡辺 由美", kana: "わたなべ ゆみ", company: "株式会社リーフアンドコー", role: "マーケティング責任者", email: "yumi@leafandco.jp", phone: "052-711-0921", address: "愛知県名古屋市中区栄 3-2-1", initials: "渡辺", color: "#a38f6e", tags: ["小売"], updated: "9月15日", active: true, notes: [] },
-  { id: 8, name: "中村 拓也", kana: "なかむら たくや", company: "中村建築設計事務所", role: "代表", email: "takuya@nakamura-arch.jp", phone: "075-384-1172", address: "京都府京都市中京区烏丸通 21", initials: "中村", color: "#718f98", tags: ["建築"], updated: "9月12日", active: false, notes: [] },
-  { id: 9, name: "小林 彩", kana: "こばやし あや", company: "株式会社ハルカ", role: "広報室長", email: "aya.kobayashi@haruka.jp", phone: "078-388-4100", address: "兵庫県神戸市中央区海岸通 7", initials: "小林", color: "#b27f76", tags: ["広報"], updated: "9月8日", active: true, notes: [] },
-  { id: 10, name: "加藤 和也", kana: "かとう かずや", company: "KATO FOODS", role: "代表取締役", email: "kato@kato-foods.jp", phone: "082-211-9634", address: "広島県広島市中区紙屋町 2-5", initials: "加藤", color: "#8e9c6b", tags: ["食品"], updated: "9月4日", active: true, notes: [] },
-  { id: 11, name: "吉田 麻衣", kana: "よしだ まい", company: "株式会社ネスト", role: "商品企画", email: "mai@nest-home.jp", phone: "022-718-3350", address: "宮城県仙台市青葉区一番町 1-3", initials: "吉田", color: "#9a819a", tags: ["住まい"], updated: "8月28日", active: false, notes: [] },
-  { id: 12, name: "林 大輔", kana: "はやし だいすけ", company: "オリオン物流株式会社", role: "経営企画部長", email: "hayashi@orion-logi.co.jp", phone: "048-622-7741", address: "埼玉県さいたま市大宮区桜木町 4", initials: "林", color: "#738b80", tags: ["物流"], updated: "8月21日", active: true, notes: [] }
+  { id: 1, name: "田中 美咲", kana: "たなか みさき", company: "株式会社アーバンデザイン", role: "代表取締役", rank: "プラチナ", email: "m.tanaka@urban-design.jp", phone: "03-6821-1940", address: "東京都渋谷区神宮前 4-12-8", initials: "田中", color: "#7ca193", tags: ["重要顧客", "デザイン"], updated: "今日 10:32", active: true, notes: [{ text: "秋のブランドリニューアルについて、次回の打ち合わせで方向性を確認。参考資料を事前に共有する。", date: "2026年10月1日  佐藤 健一" }, { text: "展示会でご挨拶。新規店舗の内装プロジェクトを検討中とのこと。", date: "2026年9月18日  佐藤 健一" }] },
+  { id: 2, name: "鈴木 一郎", kana: "すずき いちろう", company: "鈴木商事株式会社", role: "営業部長", rank: "ゴールド", email: "i.suzuki@suzuki-shoji.co.jp", phone: "045-910-2281", address: "神奈川県横浜市中区山下町 82", initials: "鈴木", color: "#b28e74", tags: ["商社"], updated: "昨日", active: true, notes: [{ text: "契約更新の見積書を送付。来週中に社内承認予定。", date: "2026年9月30日  佐藤 健一" }] },
+  { id: 3, name: "佐々木 優子", kana: "ささき ゆうこ", company: "合同会社みらい企画", role: "プロジェクトマネージャー", rank: "ゴールド", email: "yuko@mirai-kikaku.jp", phone: "06-7734-3092", address: "大阪府大阪市北区梅田 2-4-9", initials: "佐々", color: "#798ba5", tags: ["企画", "継続案件"], updated: "9月29日", active: true, notes: [{ text: "新サービスのローンチは11月中旬を予定。制作スケジュールを再調整する。", date: "2026年9月29日  佐藤 健一" }] },
+  { id: 4, name: "高橋 健太", kana: "たかはし けんた", company: "株式会社ノースフィールド", role: "取締役", rank: "プラチナ", email: "takahashi@northfield.jp", phone: "011-825-6670", address: "北海道札幌市中央区北3条西 5", initials: "高橋", color: "#7d987c", tags: ["重要顧客"], updated: "9月26日", active: true, notes: [] },
+  { id: 5, name: "山本 明日香", kana: "やまもと あすか", company: "アトリエ ソラ", role: "オーナー", rank: "シルバー", email: "asuka@atelier-sora.com", phone: "092-451-8083", address: "福岡県福岡市博多区博多駅前 1-7", initials: "山本", color: "#b88789", tags: ["クリエイティブ"], updated: "9月22日", active: false, notes: [{ text: "春のカタログ制作について相談あり。年明けに再度ご連絡する。", date: "2026年9月22日  佐藤 健一" }] },
+  { id: 6, name: "伊藤 直樹", kana: "いとう なおき", company: "東西テクノロジー株式会社", role: "事業開発部 マネージャー", rank: "ブロンズ", email: "n.ito@tozai-tech.jp", phone: "03-5501-4438", address: "東京都港区芝浦 3-10-6", initials: "伊藤", color: "#8c85a2", tags: ["IT", "新規"], updated: "9月18日", active: true, notes: [] },
+  { id: 7, name: "渡辺 由美", kana: "わたなべ ゆみ", company: "株式会社リーフアンドコー", role: "マーケティング責任者", rank: "シルバー", email: "yumi@leafandco.jp", phone: "052-711-0921", address: "愛知県名古屋市中区栄 3-2-1", initials: "渡辺", color: "#a38f6e", tags: ["小売"], updated: "9月15日", active: true, notes: [] },
+  { id: 8, name: "中村 拓也", kana: "なかむら たくや", company: "中村建築設計事務所", role: "代表", rank: "ブロンズ", email: "takuya@nakamura-arch.jp", phone: "075-384-1172", address: "京都府京都市中京区烏丸通 21", initials: "中村", color: "#718f98", tags: ["建築"], updated: "9月12日", active: false, notes: [] },
+  { id: 9, name: "小林 彩", kana: "こばやし あや", company: "株式会社ハルカ", role: "広報室長", rank: "シルバー", email: "aya.kobayashi@haruka.jp", phone: "078-388-4100", address: "兵庫県神戸市中央区海岸通 7", initials: "小林", color: "#b27f76", tags: ["広報"], updated: "9月8日", active: true, notes: [] },
+  { id: 10, name: "加藤 和也", kana: "かとう かずや", company: "KATO FOODS", role: "代表取締役", rank: "ゴールド", email: "kato@kato-foods.jp", phone: "082-211-9634", address: "広島県広島市中区紙屋町 2-5", initials: "加藤", color: "#8e9c6b", tags: ["食品"], updated: "9月4日", active: true, notes: [] },
+  { id: 11, name: "吉田 麻衣", kana: "よしだ まい", company: "株式会社ネスト", role: "商品企画", rank: "ブロンズ", email: "mai@nest-home.jp", phone: "022-718-3350", address: "宮城県仙台市青葉区一番町 1-3", initials: "吉田", color: "#9a819a", tags: ["住まい"], updated: "8月28日", active: false, notes: [] },
+  { id: 12, name: "林 大輔", kana: "はやし だいすけ", company: "オリオン物流株式会社", role: "経営企画部長", rank: "シルバー", email: "hayashi@orion-logi.co.jp", phone: "048-622-7741", address: "埼玉県さいたま市大宮区桜木町 4", initials: "林", color: "#738b80", tags: ["物流"], updated: "8月21日", active: true, notes: [] }
 ];
 
 const storedNotes = JSON.parse(localStorage.getItem("tsumugu-customer-notes") || "{}");
@@ -34,10 +34,14 @@ function escapeHTML(value) {
   return String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 }
 
+function rankClass(rank) {
+  return ({ "プラチナ": "platinum", "ゴールド": "gold", "シルバー": "silver", "ブロンズ": "bronze" })[rank] || "";
+}
+
 function filteredCustomers() {
   const query = searchInput.value.trim().toLowerCase();
   let result = customers.filter(customer => {
-    const matches = `${customer.name} ${customer.kana} ${customer.company}`.toLowerCase().includes(query);
+    const matches = `${customer.name} ${customer.kana} ${customer.company} ${customer.rank}`.toLowerCase().includes(query);
     return matches && (!activeOnly || customer.active);
   });
   if (!newestFirst) result = [...result].reverse();
@@ -55,7 +59,7 @@ function renderList() {
     <button class="customer-row ${customer.id === selectedId ? "active" : ""}" type="button" data-id="${customer.id}">
       <span class="avatar customer-avatar" style="background:${customer.color}">${customer.initials}</span>
       <span class="customer-main">
-        <span class="customer-name-line"><span class="customer-name">${customer.name}</span><span class="status-dot ${customer.active ? "" : "quiet"}"></span></span>
+        <span class="customer-name-line"><span class="customer-name">${customer.name}</span><span class="status-dot ${customer.active ? "" : "quiet"}"></span><span class="rank-badge rank-${rankClass(customer.rank)}">${customer.rank}</span></span>
         <span class="customer-company">${customer.company}</span>
       </span>
       <span class="customer-date">${customer.updated}</span>
@@ -83,7 +87,7 @@ function renderDetail() {
       </div>
       <div class="detail-identity">
         <div class="avatar detail-avatar" style="background:${customer.color}">${customer.initials}</div>
-        <div><h2>${customer.name}</h2><p>${customer.company}</p></div>
+        <div><h2>${customer.name}</h2><p>${customer.company}</p><span class="rank-badge detail-rank rank-${rankClass(customer.rank)}">${customer.rank}ランク</span></div>
       </div>
       <div class="tag-row">${customer.tags.map((tag, i) => `<span class="tag ${i === 0 && tag === "重要顧客" ? "gold" : ""}">${tag}</span>`).join("")}</div>
     </div>

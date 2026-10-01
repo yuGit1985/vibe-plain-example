@@ -140,6 +140,11 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 .customer-main { min-width: 0; }
 .customer-name-line { display: flex; align-items: center; gap: 8px; }
 .customer-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #2b443d; font-size: 13px; font-weight: 600; }
+.rank-badge { flex: 0 0 auto; padding: 2px 6px; border: 1px solid transparent; border-radius: 4px; font-size: 8px; font-weight: 700; line-height: 1.35; }
+.rank-platinum { border-color: #c8d4d5; background: #eef3f3; color: #526c70; }
+.rank-gold { border-color: #ead5ad; background: #fbf2df; color: #946c2c; }
+.rank-silver { border-color: #d8dcdf; background: #f2f4f5; color: #6c777d; }
+.rank-bronze { border-color: #e1c8b6; background: #f8ece4; color: #8a5f43; }
 .customer-company { margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #87948f; font-size: 10px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #70a588; }
 .status-dot.quiet { background: #c2cbc7; }
@@ -156,6 +161,7 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 .detail-avatar { width: 58px; height: 58px; font-size: 16px; }
 .detail-identity h2 { margin: 0 0 6px; color: #213d36; font-size: 19px; }
 .detail-identity p { margin: 0; color: #83918c; font-size: 11px; }
+.detail-rank { display: inline-block; margin-top: 8px; padding: 3px 8px; font-size: 9px; }
 .tag-row { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; }
 .tag { padding: 4px 9px; border-radius: 20px; background: #e8f1ec; color: #49705f; font-size: 9px; font-weight: 600; }
 .tag.gold { background: #f8eddc; color: #a57636; }
