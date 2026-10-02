@@ -68,20 +68,23 @@ function loadApp(initialSession = {}) {
     querySelector: element
   };
   const sessionStorage = createStorage(initialSession);
+  element("#emailModal").hidden = true;
   const context = {
     document,
     localStorage: createStorage(),
     sessionStorage,
+    URLSearchParams,
     window: {
       clearTimeout() {},
       innerWidth: 1024,
+      location: { href: "" },
       setTimeout() {}
     }
   };
 
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   vm.runInNewContext(source, context);
-  return { element, sessionStorage };
+  return { element, sessionStorage, window: context.window };
 }
 
 test("login, password visibility, and logout flow", () => {
@@ -124,4 +127,35 @@ test("restores an authenticated tab session", () => {
 
   assert.equal(element("#authScreen").hidden, true);
   assert.equal(element("#appShell").hidden, false);
+});
+
+test("creates an email for the selected customer", () => {
+  const { element, window } = loadApp({ "tsumugu-authenticated": "true" });
+  const modal = element("#emailModal");
+  const form = element("#emailForm");
+  const subject = element("#emailSubject");
+  const body = element("#emailBody");
+
+  element("#detailPanel").listeners.click({
+    preventDefault() {},
+    target: { closest: () => ({}) }
+  });
+
+  assert.equal(modal.hidden, false);
+  assert.equal(element("#emailRecipient").value, "m.tanaka@urban-design.jp");
+  assert.match(body.value, /田中 美咲 様/);
+  assert.equal(subject.focused, true);
+
+  form.listeners.submit({ preventDefault() {} });
+  assert.match(element("#emailError").textContent, /件名と本文/);
+  assert.equal(window.location.href, "");
+
+  subject.value = "次回のお打ち合わせについて";
+  body.value = "田中 美咲 様\n\n日程をご確認ください。";
+  form.listeners.submit({ preventDefault() {} });
+
+  assert.match(window.location.href, /^mailto:m\.tanaka%40urban-design\.jp\?/);
+  assert.match(window.location.href, /subject=/);
+  assert.match(window.location.href, /body=/);
+  assert.equal(modal.hidden, true);
 });

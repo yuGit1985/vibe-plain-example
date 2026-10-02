@@ -144,6 +144,37 @@
       <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
       <span>メモを保存しました</span>
     </div>
+    <div class="email-modal" id="emailModal" hidden>
+      <div class="email-modal-backdrop" data-email-close></div>
+      <section class="email-dialog" role="dialog" aria-modal="true" aria-labelledby="emailDialogTitle">
+        <div class="email-dialog-header">
+          <div>
+            <p class="eyebrow">NEW MESSAGE</p>
+            <h2 id="emailDialogTitle">メールを作成</h2>
+          </div>
+          <button class="email-close-button" id="emailCloseButton" type="button" aria-label="閉じる">×</button>
+        </div>
+        <form class="email-form" id="emailForm" novalidate>
+          <label class="email-field" for="emailRecipient">
+            <span>宛先</span>
+            <input id="emailRecipient" name="recipient" type="email" readonly />
+          </label>
+          <label class="email-field" for="emailSubject">
+            <span>件名</span>
+            <input id="emailSubject" name="subject" type="text" maxlength="120" required placeholder="件名を入力" />
+          </label>
+          <label class="email-field" for="emailBody">
+            <span>本文</span>
+            <textarea id="emailBody" name="body" maxlength="2000" required></textarea>
+          </label>
+          <p class="email-error" id="emailError" role="alert" aria-live="polite"></p>
+          <div class="email-form-actions">
+            <button class="email-cancel-button" id="emailCancelButton" type="button">キャンセル</button>
+            <button class="primary-button" type="submit">メールアプリで送信</button>
+          </div>
+        </form>
+      </section>
+    </div>
     <div class="scrim" id="scrim"></div>
 
     <script src="app.js"></script>

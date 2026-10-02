@@ -83,6 +83,12 @@ const resultCount = document.querySelector("#resultCount");
 const filterButton = document.querySelector("#filterButton");
 const sortButton = document.querySelector("#sortButton");
 const toast = document.querySelector("#toast");
+const emailModal = document.querySelector("#emailModal");
+const emailForm = document.querySelector("#emailForm");
+const emailRecipient = document.querySelector("#emailRecipient");
+const emailSubject = document.querySelector("#emailSubject");
+const emailBody = document.querySelector("#emailBody");
+const emailError = document.querySelector("#emailError");
 
 loginForm.addEventListener("submit", event => {
   event.preventDefault();
@@ -166,7 +172,7 @@ function renderDetail() {
   detail.innerHTML = `
     <div class="detail-top">
       <div class="detail-actions">
-        <button class="icon-button" type="button" aria-label="メールを送る" title="メールを送る">${icon("mail")}</button>
+        <button class="icon-button" type="button" data-action="compose-email" aria-label="メールを送る" title="メールを送る">${icon("mail")}</button>
         <button class="icon-button" type="button" aria-label="その他の操作" title="その他の操作">•••</button>
       </div>
       <div class="detail-identity">
@@ -180,7 +186,7 @@ function renderDetail() {
       <div class="info-grid">
         <div class="info-item"><div class="info-label">${icon("briefcase")}役職</div><div class="info-value">${customer.role}</div></div>
         <div class="info-item"><div class="info-label">${icon("phone")}電話番号</div><div class="info-value"><a href="tel:${customer.phone}">${customer.phone}</a></div></div>
-        <div class="info-item full"><div class="info-label">${icon("mail")}メールアドレス</div><div class="info-value"><a href="mailto:${customer.email}">${customer.email}</a></div></div>
+        <div class="info-item full"><div class="info-label">${icon("mail")}メールアドレス</div><div class="info-value"><a href="mailto:${customer.email}" data-action="compose-email">${customer.email}</a></div></div>
         <div class="info-item full"><div class="info-label">${icon("pin")}住所</div><div class="info-value">${customer.address}</div></div>
       </div>
       <div class="divider"></div>
@@ -227,6 +233,55 @@ function showToast(message) {
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2400);
 }
 
+function openEmailComposer() {
+  const customer = customers.find(item => item.id === selectedId);
+  emailForm.reset();
+  emailRecipient.value = customer.email;
+  emailBody.value = `${customer.name} 様\n\n\n\n佐藤 健一`;
+  emailError.textContent = "";
+  emailModal.hidden = false;
+  document.body.classList.add("modal-open");
+  emailSubject.focus();
+}
+
+function closeEmailComposer() {
+  emailModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  emailError.textContent = "";
+}
+
+function createMailtoUrl(recipient, subject, body) {
+  const query = new URLSearchParams({ subject, body });
+  return `mailto:${encodeURIComponent(recipient)}?${query.toString()}`;
+}
+
+detail.addEventListener("click", event => {
+  const trigger = event.target.closest("[data-action='compose-email']");
+  if (!trigger) return;
+  event.preventDefault();
+  openEmailComposer();
+});
+
+emailForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const subject = emailSubject.value.trim();
+  const body = emailBody.value.trim();
+  if (!subject || !body) {
+    emailError.textContent = "件名と本文を入力してください。";
+    (!subject ? emailSubject : emailBody).focus();
+    return;
+  }
+  window.location.href = createMailtoUrl(emailRecipient.value, subject, body);
+  closeEmailComposer();
+  showToast("メールアプリを開きました");
+});
+
+document.querySelector("#emailCloseButton").addEventListener("click", closeEmailComposer);
+document.querySelector("#emailCancelButton").addEventListener("click", closeEmailComposer);
+emailModal.addEventListener("click", event => {
+  if (event.target.matches("[data-email-close]")) closeEmailComposer();
+});
+
 list.addEventListener("click", event => {
   const row = event.target.closest(".customer-row");
   if (!row) return;
@@ -249,6 +304,10 @@ sortButton.addEventListener("click", () => {
   renderList();
 });
 document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !emailModal.hidden) {
+    closeEmailComposer();
+    return;
+  }
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
     event.preventDefault();
     searchInput.focus();
