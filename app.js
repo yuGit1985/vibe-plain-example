@@ -47,7 +47,7 @@ function showAuthenticatedView(isAuthenticated) {
   }
 }
 
-const customers = [
+const defaultCustomers = [
   { id: 1, name: "田中 美咲", kana: "たなか みさき", company: "株式会社アーバンデザイン", role: "代表取締役", rank: "プラチナ", email: "m.tanaka@urban-design.jp", phone: "03-6821-1940", address: "東京都渋谷区神宮前 4-12-8", initials: "田中", color: "#7ca193", tags: ["重要顧客", "デザイン"], updated: "今日 10:32", active: true, notes: [{ text: "秋のブランドリニューアルについて、次回の打ち合わせで方向性を確認。参考資料を事前に共有する。", date: "2026年10月1日  佐藤 健一" }, { text: "展示会でご挨拶。新規店舗の内装プロジェクトを検討中とのこと。", date: "2026年9月18日  佐藤 健一" }] },
   { id: 2, name: "鈴木 一郎", kana: "すずき いちろう", company: "鈴木商事株式会社", role: "営業部長", rank: "ゴールド", email: "i.suzuki@suzuki-shoji.co.jp", phone: "045-910-2281", address: "神奈川県横浜市中区山下町 82", initials: "鈴木", color: "#b28e74", tags: ["商社"], updated: "昨日", active: true, notes: [{ text: "契約更新の見積書を送付。来週中に社内承認予定。", date: "2026年9月30日  佐藤 健一" }] },
   { id: 3, name: "佐々木 優子", kana: "ささき ゆうこ", company: "合同会社みらい企画", role: "プロジェクトマネージャー", rank: "ゴールド", email: "yuko@mirai-kikaku.jp", phone: "06-7734-3092", address: "大阪府大阪市北区梅田 2-4-9", initials: "佐々", color: "#798ba5", tags: ["企画", "継続案件"], updated: "9月29日", active: true, notes: [{ text: "新サービスのローンチは11月中旬を予定。制作スケジュールを再調整する。", date: "2026年9月29日  佐藤 健一" }] },
@@ -62,6 +62,15 @@ const customers = [
   { id: 12, name: "林 大輔", kana: "はやし だいすけ", company: "オリオン物流株式会社", role: "経営企画部長", rank: "シルバー", email: "hayashi@orion-logi.co.jp", phone: "048-622-7741", address: "埼玉県さいたま市大宮区桜木町 4", initials: "林", color: "#738b80", tags: ["物流"], updated: "8月21日", active: true, notes: [] }
 ];
 
+const CUSTOMER_STORAGE_KEY = "tsumugu-customers";
+let customers;
+try {
+  const savedCustomers = JSON.parse(localStorage.getItem(CUSTOMER_STORAGE_KEY) || "null");
+  customers = Array.isArray(savedCustomers) ? savedCustomers : defaultCustomers;
+} catch {
+  customers = defaultCustomers;
+}
+
 let storedNotes = {};
 try {
   storedNotes = JSON.parse(localStorage.getItem("tsumugu-customer-notes") || "{}");
@@ -71,6 +80,14 @@ try {
 customers.forEach(customer => {
   if (storedNotes[customer.id]) customer.notes = storedNotes[customer.id];
 });
+
+function saveCustomers() {
+  try {
+    localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(customers));
+  } catch {
+    // Changes remain available for the current page when storage is unavailable.
+  }
+}
 
 let selectedId = 1;
 let activeOnly = false;
@@ -89,6 +106,21 @@ const emailRecipient = document.querySelector("#emailRecipient");
 const emailSubject = document.querySelector("#emailSubject");
 const emailBody = document.querySelector("#emailBody");
 const emailError = document.querySelector("#emailError");
+const navCount = document.querySelector("#navCount");
+const customerModal = document.querySelector("#customerModal");
+const customerForm = document.querySelector("#customerForm");
+const customerError = document.querySelector("#customerError");
+const customerName = document.querySelector("#customerName");
+const customerKana = document.querySelector("#customerKana");
+const customerCompany = document.querySelector("#customerCompany");
+const customerRole = document.querySelector("#customerRole");
+const customerRank = document.querySelector("#customerRank");
+const customerEmail = document.querySelector("#customerEmail");
+const customerPhone = document.querySelector("#customerPhone");
+const customerAddress = document.querySelector("#customerAddress");
+const customerActive = document.querySelector("#customerActive");
+const deleteModal = document.querySelector("#deleteModal");
+const deleteCustomerName = document.querySelector("#deleteCustomerName");
 
 loginForm.addEventListener("submit", event => {
   event.preventDefault();
@@ -141,16 +173,17 @@ function filteredCustomers() {
 function renderList() {
   const visible = filteredCustomers();
   resultCount.textContent = visible.length;
+  navCount.textContent = customers.length;
   if (!visible.length) {
     list.innerHTML = `<div class="empty-state"><strong>顧客が見つかりません</strong>検索条件を変えてお試しください。</div>`;
     return;
   }
   list.innerHTML = visible.map(customer => `
     <button class="customer-row ${customer.id === selectedId ? "active" : ""}" type="button" data-id="${customer.id}">
-      <span class="avatar customer-avatar" style="background:${customer.color}">${customer.initials}</span>
+      <span class="avatar customer-avatar" style="background:${customer.color}">${escapeHTML(customer.initials)}</span>
       <span class="customer-main">
-        <span class="customer-name-line"><span class="customer-name">${customer.name}</span><span class="status-dot ${customer.active ? "" : "quiet"}"></span><span class="rank-badge rank-${rankClass(customer.rank)}">${customer.rank}</span></span>
-        <span class="customer-company">${customer.company}</span>
+        <span class="customer-name-line"><span class="customer-name">${escapeHTML(customer.name)}</span><span class="status-dot ${customer.active ? "" : "quiet"}"></span><span class="rank-badge rank-${rankClass(customer.rank)}">${escapeHTML(customer.rank)}</span></span>
+        <span class="customer-company">${escapeHTML(customer.company)}</span>
       </span>
       <span class="customer-date">${customer.updated}</span>
     </button>
@@ -162,32 +195,39 @@ function icon(name) {
     mail: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
     phone: '<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.33 1.84.56 2.8.69A2 2 0 0 1 22 16.92Z"/></svg>',
     pin: '<svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
-    briefcase: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>'
+    briefcase: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
+    edit: '<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v6M14 10v6"/></svg>'
   };
   return icons[name];
 }
 
 function renderDetail() {
   const customer = customers.find(item => item.id === selectedId);
+  if (!customer) {
+    detail.innerHTML = '<div class="empty-state"><strong>顧客が登録されていません</strong>顧客を追加すると、ここに詳細が表示されます。</div>';
+    return;
+  }
   detail.innerHTML = `
     <div class="detail-top">
       <div class="detail-actions">
         <button class="icon-button" type="button" data-action="compose-email" aria-label="メールを送る" title="メールを送る">${icon("mail")}</button>
-        <button class="icon-button" type="button" aria-label="その他の操作" title="その他の操作">•••</button>
+        <button class="icon-button" type="button" data-action="edit-customer" aria-label="顧客情報を編集" title="顧客情報を編集">${icon("edit")}</button>
+        <button class="icon-button delete-action" type="button" data-action="delete-customer" aria-label="顧客を削除" title="顧客を削除">${icon("trash")}</button>
       </div>
       <div class="detail-identity">
-        <div class="avatar detail-avatar" style="background:${customer.color}">${customer.initials}</div>
-        <div><h2>${customer.name}</h2><p>${customer.company}</p><span class="rank-badge detail-rank rank-${rankClass(customer.rank)}">${customer.rank}ランク</span></div>
+        <div class="avatar detail-avatar" style="background:${customer.color}">${escapeHTML(customer.initials)}</div>
+        <div><h2>${escapeHTML(customer.name)}</h2><p>${escapeHTML(customer.company)}</p><span class="rank-badge detail-rank rank-${rankClass(customer.rank)}">${escapeHTML(customer.rank)}ランク</span></div>
       </div>
-      <div class="tag-row">${customer.tags.map((tag, i) => `<span class="tag ${i === 0 && tag === "重要顧客" ? "gold" : ""}">${tag}</span>`).join("")}</div>
+      <div class="tag-row">${customer.tags.map((tag, i) => `<span class="tag ${i === 0 && tag === "重要顧客" ? "gold" : ""}">${escapeHTML(tag)}</span>`).join("")}</div>
     </div>
     <div class="detail-body">
       <h3 class="section-title">基本情報</h3>
       <div class="info-grid">
-        <div class="info-item"><div class="info-label">${icon("briefcase")}役職</div><div class="info-value">${customer.role}</div></div>
-        <div class="info-item"><div class="info-label">${icon("phone")}電話番号</div><div class="info-value"><a href="tel:${customer.phone}">${customer.phone}</a></div></div>
-        <div class="info-item full"><div class="info-label">${icon("mail")}メールアドレス</div><div class="info-value"><a href="mailto:${customer.email}" data-action="compose-email">${customer.email}</a></div></div>
-        <div class="info-item full"><div class="info-label">${icon("pin")}住所</div><div class="info-value">${customer.address}</div></div>
+        <div class="info-item"><div class="info-label">${icon("briefcase")}役職</div><div class="info-value">${escapeHTML(customer.role || "—")}</div></div>
+        <div class="info-item"><div class="info-label">${icon("phone")}電話番号</div><div class="info-value">${customer.phone ? `<a href="tel:${encodeURIComponent(customer.phone)}">${escapeHTML(customer.phone)}</a>` : "—"}</div></div>
+        <div class="info-item full"><div class="info-label">${icon("mail")}メールアドレス</div><div class="info-value"><a href="mailto:${encodeURIComponent(customer.email)}" data-action="compose-email">${escapeHTML(customer.email)}</a></div></div>
+        <div class="info-item full"><div class="info-label">${icon("pin")}住所</div><div class="info-value">${escapeHTML(customer.address || "—")}</div></div>
       </div>
       <div class="divider"></div>
       <div class="memo-heading"><h3 class="section-title">メモ</h3><span class="memo-count">${customer.notes.length}件</span></div>
@@ -221,7 +261,12 @@ function addMemo(event) {
     date: `${new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "long", day: "numeric" }).format(new Date())}  佐藤 健一`
   });
   storedNotes[customer.id] = customer.notes;
-  localStorage.setItem("tsumugu-customer-notes", JSON.stringify(storedNotes));
+  try {
+    localStorage.setItem("tsumugu-customer-notes", JSON.stringify(storedNotes));
+  } catch {
+    // The memo remains available for the current page when storage is unavailable.
+  }
+  saveCustomers();
   renderDetail();
   showToast("メモを保存しました");
 }
@@ -233,6 +278,11 @@ function showToast(message) {
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2400);
 }
 
+function syncModalState() {
+  const hasOpenModal = !emailModal.hidden || !customerModal.hidden || !deleteModal.hidden;
+  document.body.classList.toggle("modal-open", hasOpenModal);
+}
+
 function openEmailComposer() {
   const customer = customers.find(item => item.id === selectedId);
   emailForm.reset();
@@ -240,14 +290,52 @@ function openEmailComposer() {
   emailBody.value = `${customer.name} 様\n\n\n\n佐藤 健一`;
   emailError.textContent = "";
   emailModal.hidden = false;
-  document.body.classList.add("modal-open");
+  syncModalState();
   emailSubject.focus();
 }
 
 function closeEmailComposer() {
   emailModal.hidden = true;
-  document.body.classList.remove("modal-open");
   emailError.textContent = "";
+  syncModalState();
+}
+
+function openCustomerEditor() {
+  const customer = customers.find(item => item.id === selectedId);
+  if (!customer) return;
+  customerName.value = customer.name;
+  customerKana.value = customer.kana;
+  customerCompany.value = customer.company;
+  customerRole.value = customer.role;
+  customerRank.value = customer.rank;
+  customerEmail.value = customer.email;
+  customerPhone.value = customer.phone;
+  customerAddress.value = customer.address;
+  customerActive.checked = customer.active;
+  customerError.textContent = "";
+  customerModal.hidden = false;
+  syncModalState();
+  customerName.focus();
+}
+
+function closeCustomerEditor() {
+  customerModal.hidden = true;
+  customerError.textContent = "";
+  syncModalState();
+}
+
+function openDeleteConfirmation() {
+  const customer = customers.find(item => item.id === selectedId);
+  if (!customer) return;
+  deleteCustomerName.textContent = customer.name;
+  deleteModal.hidden = false;
+  syncModalState();
+  document.querySelector("#deleteCancelButton").focus();
+}
+
+function closeDeleteConfirmation() {
+  deleteModal.hidden = true;
+  syncModalState();
 }
 
 function createMailtoUrl(recipient, subject, body) {
@@ -256,10 +344,82 @@ function createMailtoUrl(recipient, subject, body) {
 }
 
 detail.addEventListener("click", event => {
-  const trigger = event.target.closest("[data-action='compose-email']");
-  if (!trigger) return;
+  if (event.target.closest("[data-action='compose-email']")) {
+    event.preventDefault();
+    openEmailComposer();
+    return;
+  }
+  if (event.target.closest("[data-action='edit-customer']")) {
+    openCustomerEditor();
+    return;
+  }
+  if (event.target.closest("[data-action='delete-customer']")) openDeleteConfirmation();
+});
+
+customerForm.addEventListener("submit", event => {
   event.preventDefault();
-  openEmailComposer();
+  const name = customerName.value.trim();
+  const company = customerCompany.value.trim();
+  const email = customerEmail.value.trim();
+  if (!name || !company || !email) {
+    customerError.textContent = "氏名、会社名、メールアドレスを入力してください。";
+    (!name ? customerName : !company ? customerCompany : customerEmail).focus();
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    customerError.textContent = "正しい形式のメールアドレスを入力してください。";
+    customerEmail.focus();
+    return;
+  }
+
+  const customer = customers.find(item => item.id === selectedId);
+  if (!customer) return;
+  Object.assign(customer, {
+    name,
+    kana: customerKana.value.trim(),
+    company,
+    role: customerRole.value.trim(),
+    rank: customerRank.value,
+    email,
+    phone: customerPhone.value.trim(),
+    address: customerAddress.value.trim(),
+    active: customerActive.checked,
+    initials: name.replace(/\s/g, "").slice(0, 2),
+    updated: `今日 ${new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())}`
+  });
+  saveCustomers();
+  closeCustomerEditor();
+  renderList();
+  renderDetail();
+  showToast("顧客情報を更新しました");
+});
+
+document.querySelector("#deleteConfirmButton").addEventListener("click", () => {
+  const customerIndex = customers.findIndex(item => item.id === selectedId);
+  if (customerIndex === -1) return;
+  const [deletedCustomer] = customers.splice(customerIndex, 1);
+  delete storedNotes[deletedCustomer.id];
+  try {
+    localStorage.setItem("tsumugu-customer-notes", JSON.stringify(storedNotes));
+  } catch {
+    // Deletion remains available for the current page when storage is unavailable.
+  }
+  selectedId = customers[customerIndex]?.id ?? customers[customerIndex - 1]?.id ?? null;
+  saveCustomers();
+  closeDeleteConfirmation();
+  renderList();
+  renderDetail();
+  showToast("顧客を削除しました");
+});
+
+document.querySelector("#customerCloseButton").addEventListener("click", closeCustomerEditor);
+document.querySelector("#customerCancelButton").addEventListener("click", closeCustomerEditor);
+customerModal.addEventListener("click", event => {
+  if (event.target.matches("[data-customer-close]")) closeCustomerEditor();
+});
+document.querySelector("#deleteCancelButton").addEventListener("click", closeDeleteConfirmation);
+deleteModal.addEventListener("click", event => {
+  if (event.target.matches("[data-delete-close]")) closeDeleteConfirmation();
 });
 
 emailForm.addEventListener("submit", event => {
@@ -304,8 +464,11 @@ sortButton.addEventListener("click", () => {
   renderList();
 });
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape" && !emailModal.hidden) {
-    closeEmailComposer();
+  if (event.key === "Escape") {
+    if (!deleteModal.hidden) closeDeleteConfirmation();
+    else if (!customerModal.hidden) closeCustomerEditor();
+    else if (!emailModal.hidden) closeEmailComposer();
+    else return;
     return;
   }
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {

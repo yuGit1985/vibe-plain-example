@@ -207,6 +207,7 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 .detail-actions { position: absolute; top: 23px; right: 25px; display: flex; gap: 4px; }
 .detail-actions .icon-button { width: 33px; height: 33px; border: 1px solid #e1e6e3; border-radius: 7px; color: #71807b; background: white; }
 .detail-actions .icon-button:hover { color: var(--green); border-color: #bdd0c7; }
+.detail-actions .delete-action:hover { color: #b34f42; border-color: #dfb9b3; }
 .detail-identity { display: flex; align-items: center; gap: 15px; }
 .detail-avatar { width: 58px; height: 58px; font-size: 16px; }
 .detail-identity h2 { margin: 0 0 6px; color: #213d36; font-size: 19px; }
@@ -257,6 +258,7 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 .email-form { padding: 24px 28px 27px; display: grid; gap: 16px; }
 .email-field { display: grid; gap: 7px; color: #52645f; font-size: 11px; font-weight: 600; }
 .email-field input, .email-field textarea { width: 100%; border: 1px solid #d7dfdb; border-radius: 7px; outline: none; background: #fafbf9; color: var(--ink); }
+.email-field select { width: 100%; height: 43px; padding: 0 12px; border: 1px solid #d7dfdb; border-radius: 7px; outline: none; background: #fafbf9; color: var(--ink); }
 .email-field input { height: 43px; padding: 0 12px; }
 .email-field input[readonly] { color: #667872; background: #f1f4f2; }
 .email-field textarea { min-height: 190px; padding: 12px; resize: vertical; line-height: 1.7; }
@@ -264,6 +266,20 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
 .email-error { min-height: 16px; margin: -4px 0; color: #b34f42; font-size: 10px; }
 .email-form-actions { display: flex; justify-content: flex-end; gap: 9px; }
 .email-cancel-button { padding: 10px 15px; border: 1px solid #d7dfdb; border-radius: 7px; background: white; color: #60716c; font-size: 11px; cursor: pointer; }
+.customer-dialog { width: min(100%, 650px); }
+.customer-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.customer-form-grid .full { grid-column: 1 / -1; }
+.status-field { align-content: end; }
+.checkbox-field { height: 43px; display: flex; align-items: center; gap: 8px; color: #52645f; font-weight: 400; }
+.checkbox-field input { width: 16px; height: 16px; accent-color: var(--green); }
+.delete-dialog { width: min(100%, 470px); }
+.delete-dialog-body { padding: 28px; display: flex; align-items: flex-start; gap: 16px; }
+.delete-dialog-body h2 { margin: 0 0 10px; font-size: 20px; }
+.delete-dialog-body p:last-child { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.delete-icon { width: 38px; height: 38px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; background: #f8e9e6; color: #b34f42; font-weight: 700; }
+.delete-dialog-actions { padding: 18px 28px; border-top: 1px solid var(--line); }
+.danger-button { padding: 10px 15px; border: 0; border-radius: 7px; background: #b34f42; color: white; font-size: 11px; font-weight: 600; cursor: pointer; }
+.danger-button:hover { background: #963f35; }
 .scrim { display: none; }
 
 @media (max-width: 1050px) {
@@ -318,4 +334,7 @@ kbd { padding: 3px 6px; border: 1px solid #dce2df; border-radius: 4px; backgroun
   .email-dialog-header, .email-form { padding-inline: 18px; }
   .email-form-actions { flex-direction: column-reverse; }
   .email-form-actions button { width: 100%; }
+  .customer-form-grid { grid-template-columns: 1fr; }
+  .customer-form-grid .full { grid-column: auto; }
+  .delete-dialog-actions { padding-inline: 18px; }
 }

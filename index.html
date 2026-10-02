@@ -175,6 +175,53 @@
         </form>
       </section>
     </div>
+    <div class="email-modal" id="customerModal" hidden>
+      <div class="email-modal-backdrop" data-customer-close></div>
+      <section class="email-dialog customer-dialog" role="dialog" aria-modal="true" aria-labelledby="customerDialogTitle">
+        <div class="email-dialog-header">
+          <div>
+            <p class="eyebrow">EDIT CUSTOMER</p>
+            <h2 id="customerDialogTitle">顧客情報を編集</h2>
+          </div>
+          <button class="email-close-button" id="customerCloseButton" type="button" aria-label="閉じる">×</button>
+        </div>
+        <form class="email-form customer-form" id="customerForm" novalidate>
+          <div class="customer-form-grid">
+            <label class="email-field" for="customerName"><span>氏名 *</span><input id="customerName" type="text" maxlength="60" required /></label>
+            <label class="email-field" for="customerKana"><span>ふりがな</span><input id="customerKana" type="text" maxlength="80" /></label>
+            <label class="email-field full" for="customerCompany"><span>会社名 *</span><input id="customerCompany" type="text" maxlength="100" required /></label>
+            <label class="email-field" for="customerRole"><span>役職</span><input id="customerRole" type="text" maxlength="80" /></label>
+            <label class="email-field" for="customerRank"><span>顧客ランク</span><select id="customerRank"><option>プラチナ</option><option>ゴールド</option><option>シルバー</option><option>ブロンズ</option></select></label>
+            <label class="email-field full" for="customerEmail"><span>メールアドレス *</span><input id="customerEmail" type="email" maxlength="120" required /></label>
+            <label class="email-field" for="customerPhone"><span>電話番号</span><input id="customerPhone" type="tel" maxlength="30" /></label>
+            <label class="email-field status-field" for="customerActive"><span>ステータス</span><span class="checkbox-field"><input id="customerActive" type="checkbox" /> 有効な顧客</span></label>
+            <label class="email-field full" for="customerAddress"><span>住所</span><input id="customerAddress" type="text" maxlength="160" /></label>
+          </div>
+          <p class="email-error" id="customerError" role="alert" aria-live="polite"></p>
+          <div class="email-form-actions">
+            <button class="email-cancel-button" id="customerCancelButton" type="button">キャンセル</button>
+            <button class="primary-button" type="submit">変更を保存</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <div class="email-modal" id="deleteModal" hidden>
+      <div class="email-modal-backdrop" data-delete-close></div>
+      <section class="email-dialog delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="deleteDialogTitle" aria-describedby="deleteDialogDescription">
+        <div class="delete-dialog-body">
+          <div class="delete-icon" aria-hidden="true">!</div>
+          <div>
+            <p class="eyebrow">DELETE CUSTOMER</p>
+            <h2 id="deleteDialogTitle">顧客を削除しますか？</h2>
+            <p id="deleteDialogDescription"><strong id="deleteCustomerName"></strong> の顧客情報とメモが削除されます。この操作は取り消せません。</p>
+          </div>
+        </div>
+        <div class="email-form-actions delete-dialog-actions">
+          <button class="email-cancel-button" id="deleteCancelButton" type="button">キャンセル</button>
+          <button class="danger-button" id="deleteConfirmButton" type="button">削除する</button>
+        </div>
+      </section>
+    </div>
     <div class="scrim" id="scrim"></div>
 
     <script src="app.js"></script>

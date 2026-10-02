@@ -18,6 +18,8 @@ class ElementStub {
     this.textContent = "";
     this.type = "";
     this.value = "";
+    this.checked = false;
+    this.dataset = {};
   }
 
   addEventListener(type, listener) {
@@ -30,6 +32,10 @@ class ElementStub {
 
   querySelector() {
     return new ElementStub();
+  }
+
+  matches() {
+    return false;
   }
 
   reset() {
@@ -68,10 +74,13 @@ function loadApp(initialSession = {}) {
     querySelector: element
   };
   const sessionStorage = createStorage(initialSession);
+  const localStorage = createStorage();
   element("#emailModal").hidden = true;
+  element("#customerModal").hidden = true;
+  element("#deleteModal").hidden = true;
   const context = {
     document,
-    localStorage: createStorage(),
+    localStorage,
     sessionStorage,
     URLSearchParams,
     window: {
@@ -84,7 +93,7 @@ function loadApp(initialSession = {}) {
 
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   vm.runInNewContext(source, context);
-  return { element, sessionStorage, window: context.window };
+  return { element, localStorage, sessionStorage, window: context.window };
 }
 
 test("login, password visibility, and logout flow", () => {
@@ -158,4 +167,54 @@ test("creates an email for the selected customer", () => {
   assert.match(window.location.href, /subject=/);
   assert.match(window.location.href, /body=/);
   assert.equal(modal.hidden, true);
+});
+
+test("edits the selected customer and persists the changes", () => {
+  const { element, localStorage } = loadApp({ "tsumugu-authenticated": "true" });
+  const detail = element("#detailPanel");
+
+  detail.listeners.click({
+    preventDefault() {},
+    target: { closest: selector => selector.includes("edit-customer") ? {} : null }
+  });
+
+  assert.equal(element("#customerModal").hidden, false);
+  assert.equal(element("#customerName").value, "田中 美咲");
+  assert.equal(element("#customerName").focused, true);
+
+  element("#customerName").value = "田中 美咲子";
+  element("#customerCompany").value = "株式会社アーバンデザイン東京";
+  element("#customerEmail").value = "misako@example.jp";
+  element("#customerRank").value = "ゴールド";
+  element("#customerActive").checked = false;
+  element("#customerForm").listeners.submit({ preventDefault() {} });
+
+  assert.equal(element("#customerModal").hidden, true);
+  assert.match(detail.innerHTML, /田中 美咲子/);
+  assert.match(detail.innerHTML, /misako@example\.jp/);
+  const savedCustomers = JSON.parse(localStorage.getItem("tsumugu-customers"));
+  assert.equal(savedCustomers[0].name, "田中 美咲子");
+  assert.equal(savedCustomers[0].active, false);
+});
+
+test("requires confirmation before deleting a customer", () => {
+  const { element, localStorage } = loadApp({ "tsumugu-authenticated": "true" });
+  const detail = element("#detailPanel");
+
+  detail.listeners.click({
+    preventDefault() {},
+    target: { closest: selector => selector.includes("delete-customer") ? {} : null }
+  });
+
+  assert.equal(element("#deleteModal").hidden, false);
+  assert.equal(element("#deleteCustomerName").textContent, "田中 美咲");
+
+  element("#deleteConfirmButton").listeners.click();
+
+  assert.equal(element("#deleteModal").hidden, true);
+  assert.equal(element("#navCount").textContent, 11);
+  assert.match(detail.innerHTML, /鈴木 一郎/);
+  const savedCustomers = JSON.parse(localStorage.getItem("tsumugu-customers"));
+  assert.equal(savedCustomers.length, 11);
+  assert.equal(savedCustomers.some(customer => customer.id === 1), false);
 });
